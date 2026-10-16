@@ -1,0 +1,21 @@
+# Free Render web service. Use a free Postgres (Render or Neon) for DATABASE_URL: the free
+# instance has no persistent disk. Add PAYSTACK_SECRET_KEY and/or the MTN_* keys yourself.
+services:
+  - type: web
+    name: momo-one-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: MOMO_API_KEYS
+        generateValue: true
+      - key: MTN_CALLBACK_TOKEN
+        generateValue: true
+      - key: WEBHOOK_SECRET
+        generateValue: true
+      - key: WEBHOOK_URL
+        sync: false
+      - key: PAYSTACK_SECRET_KEY
+        sync: false

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" font-family="system-ui, -apple-system, Segoe UI, sans-serif" role="img" aria-labelledby="t d">
+  <title id="t">How MoMo One-API works</title>
+  <desc id="d">Your app sends one request format. MoMo One-API records the payment, routes it to a licensed provider (Paystack or MTN MoMo directly), checks statuses with the provider, and sends your app one signed webhook format. Money moves between the customer and your provider account only; MoMo One-API never holds it.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#6b6a64"/></marker>
+    <marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#b8860b"/></marker>
+    <style>
+      .box{fill:#fff;stroke:#d8d5cb;stroke-width:1.5}
+      .key{fill:#e8f3ee;stroke:#0b6e4f;stroke-width:1.5}
+      .src{fill:#fff6e0;stroke:#d9b45a;stroke-width:1.5}
+      .h{font-size:15px;font-weight:700;fill:#1d1d1b}
+      .s{font-size:12px;fill:#55544e}
+      .l{stroke:#6b6a64;stroke-width:1.5;fill:none;marker-end:url(#a)}
+      .money{stroke:#b8860b;stroke-width:2;stroke-dasharray:6 4;fill:none;marker-end:url(#m)}
+      .t{font-size:11px;font-weight:600}
+    </style>
+  </defs>
+  <rect width="960" height="380" fill="#f7f6f2"/>
+
+  <rect class="box" x="20" y="40" width="190" height="130" rx="10"/>
+  <text class="h" x="35" y="68">Your app</text>
+  <text class="s" x="35" y="90">POST /v1/collections</text>
+  <text class="s" x="35" y="108">POST /v1/payouts</text>
+  <text class="s" x="35" y="126">one format, any network,</text>
+  <text class="s" x="35" y="144">Idempotency-Key required</text>
+
+  <rect class="key" x="270" y="30" width="270" height="200" rx="10"/>
+  <text class="h" x="285" y="58">MoMo One-API</text>
+  <text class="s" x="285" y="82">1. save the payment + our reference</text>
+  <text class="s" x="285" y="102">2. route: mtn → MTN or Paystack,</text>
+  <text class="s" x="300" y="118">telecel / airteltigo / mpesa → Paystack</text>
+  <text class="s" x="285" y="138">3. map their status to ours:</text>
+  <text class="s" x="300" y="154">pending · action_required · succeeded</text>
+  <text class="s" x="300" y="170">· failed · reversed</text>
+  <text class="s" x="285" y="190">4. re-check with the provider until final</text>
+  <text class="s" x="285" y="210">5. signed webhook to your app</text>
+
+  <rect class="box" x="600" y="30" width="170" height="90" rx="10"/>
+  <text class="h" x="615" y="58">Paystack</text>
+  <text class="s" x="615" y="80">MTN · Telecel</text>
+  <text class="s" x="615" y="98">AirtelTigo · M-Pesa</text>
+
+  <rect class="box" x="600" y="140" width="170" height="90" rx="10"/>
+  <text class="h" x="615" y="168">MTN MoMo API</text>
+  <text class="s" x="615" y="190">RequesttoPay</text>
+  <text class="s" x="615" y="208">Transfer</text>
+
+  <rect class="src" x="810" y="30" width="135" height="200" rx="10"/>
+  <text class="h" x="825" y="58">Customer</text>
+  <text class="s" x="825" y="80">approves the</text>
+  <text class="s" x="825" y="98">prompt on</text>
+  <text class="s" x="825" y="116">their phone</text>
+
+  <rect class="box" x="20" y="250" width="520" height="100" rx="10"/>
+  <text class="h" x="35" y="278">Webhook Relay (optional)</text>
+  <text class="s" x="35" y="300">payment.succeeded / failed / … signed with X-Signature: sha256=…</text>
+  <text class="s" x="35" y="318">stored, de-duplicated on X-Webhook-Id, retried to your app, replayable</text>
+
+  <path class="l" d="M210 105H266"/>
+  <path class="l" d="M540 75H596"/>
+  <path class="l" d="M540 185H596"/>
+  <path class="l" d="M770 75H806"/>
+  <path class="l" d="M770 185H806"/>
+  <path class="l" d="M380 230V246"/>
+  <path class="l" d="M110 250V174"/>
+
+  <path class="money" d="M878 232C878 300 700 300 688 238"/>
+  <text class="t" x="600" y="345" fill="#b8860b">Money moves only between the customer</text>
+  <text class="t" x="600" y="362" fill="#b8860b">and your account at the licensed provider.</text>
+</svg>

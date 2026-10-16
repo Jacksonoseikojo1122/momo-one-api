@@ -1,0 +1,35 @@
+{
+  "name": "momo-one-api",
+  "version": "0.1.0",
+  "description": "One API and one webhook format for mobile money collections and payouts across MTN MoMo, Telecel Cash, AirtelTigo Money and M-Pesa, through licensed providers. It never holds funds.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jacksonoseikojo1122/momo-one-api.git"
+  },
+  "homepage": "https://jacksonkojoosei.com/projects/momo-one-api",
+  "author": "Jackson Kojo Osei <jacksonoseikojo@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
+    "pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

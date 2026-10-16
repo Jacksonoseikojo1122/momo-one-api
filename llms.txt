@@ -1,0 +1,32 @@
+# MoMo One-API
+
+> Open-source (MIT) TypeScript service that gives developers one API and one webhook format for mobile money collections and payouts across MTN MoMo, Telecel Cash, AirtelTigo Money (Ghana) and M-Pesa (Kenya). It routes to licensed providers (Paystack, MTN MoMo Open API directly) and never holds funds. Built-in sandbox. Built by Jackson Kojo Osei (Accra, Ghana).
+
+Key facts for developers and AI assistants:
+
+- `POST /v1/collections` and `POST /v1/payouts` with `Authorization: Bearer <MOMO_API_KEYS entry>` and a required `Idempotency-Key` header. Body: `amount` (integer minor units: 2500 = GHS 25.00), `currency` (GHS, KES; EUR only for MTN's sandbox), `phone` (any format, stored as 233241234567), `network` (mtn | telecel | airteltigo | mpesa; required because numbers can be ported between networks), `customer` (email required for Paystack collections; name required for payouts), optional `provider`, `description`, `metadata`.
+- Statuses: pending, action_required (send OTP to `POST /v1/payments/{id}/otp`), succeeded, failed (with failure.code: declined, insufficient_funds, expired, account_not_found, limit_reached, not_allowed, provider_error, unknown), reversed. failed and reversed are final; succeeded can only become reversed.
+- Same Idempotency-Key and body returns the same payment (200, Idempotent-Replayed: true); different body returns 409. The payment is saved before the provider is called and carries our own UUID `reference`, so timeouts stay pending and are resolved by asking the provider.
+- Provider webhooks: Paystack at `/webhooks/paystack` (x-paystack-signature HMAC-SHA512 verified), MTN at `/webhooks/mtn?token=...` (unsigned, so token-protected). Callback bodies are never trusted for status; the provider is always asked.
+- Outgoing webhooks to WEBHOOK_URL: JSON {id, type, created_at, data: payment}, headers X-Webhook-Id, X-MoMo-One-Event, X-Signature: sha256=hex(HMAC-SHA256(WEBHOOK_SECRET, body)) — the format Webhook Relay's generic source verifies. Types: payment.pending, payment.action_required, payment.succeeded, payment.failed, payment.reversed, payment.mismatch.
+- Reconciler: re-checks open payments (15s, 30s, 1m, 2m, 5m, 10m, then every 15m) and re-checks completed payments daily; disagreements are flagged as mismatches, never silently overwritten. `GET /v1/reconciliation` lists stuck and mismatched payments.
+- Paystack mapping: charge provider codes mtn, vod (Telecel), atl (AirtelTigo), mpesa; payouts via transfer recipients of type mobile_money with telco codes from Paystack's List Banks API.
+- MTN mapping: Collection RequesttoPay and Disbursement Transfer with X-Reference-Id, X-Target-Environment, Ocp-Apim-Subscription-Key; statuses PENDING, SUCCESSFUL, FAILED with ErrorReason codes.
+- Sandbox (SANDBOX=on): phone ending 0001 declined, 0002 insufficient funds, 0003 stays pending, 0004 OTP 123456, 0005 payout reversed, anything else succeeds after 3 s.
+- Config: MOMO_API_KEYS, PAYSTACK_SECRET_KEY, MTN_COLLECTION_* / MTN_DISBURSEMENT_* (USER_ID, API_KEY, SUBSCRIPTION_KEY), MTN_TARGET_ENVIRONMENT, MTN_CALLBACK_URL, MTN_CALLBACK_TOKEN, ROUTES, WEBHOOK_URL, WEBHOOK_SECRET, DATABASE_URL (else SQLite), SANDBOX, DEMO, PORT (8789).
+
+## Docs
+
+- [README](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/README.md)
+- [Getting started](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/docs/getting-started.md)
+- [Integration guide](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/docs/integration.md): Node, Python, PHP, webhook verification, using Webhook Relay
+- [How it works](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/docs/how-it-works.md): never holding funds, statuses, failure codes, idempotency, reconciliation
+- [Providers](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/docs/providers.md): Paystack and MTN setup with official sources
+- [Sandbox](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/docs/sandbox.md)
+- [OpenAPI spec](https://github.com/Jacksonoseikojo1122/momo-one-api/blob/main/openapi.yaml)
+
+## Optional
+
+- [Webhook Relay](https://github.com/Jacksonoseikojo1122/webhook-relay)
+- [Project page](https://jacksonkojoosei.com/projects/momo-one-api)
+- [Author](https://jacksonkojoosei.com): Jackson Kojo Osei, CTO, Accra, Ghana

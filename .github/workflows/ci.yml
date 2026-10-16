@@ -1,0 +1,38 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t momo .
+      - name: Smoke test the image with the sandbox
+        run: |
+          docker run -d -p 8789:8789 -e SANDBOX=on -e SANDBOX_DELAY_MS=0 --name momo momo
+          for i in $(seq 1 30); do curl -sf localhost:8789/health && break; sleep 1; done
+          id=$(curl -sf -X POST localhost:8789/v1/collections -H 'content-type: application/json' -H 'Idempotency-Key: ci-1' \
+            -d '{"amount":2500,"currency":"GHS","phone":"0241234567","network":"mtn"}' | sed 's/.*"id":"\([^"]*\)".*/\1/')
+          curl -sf -X POST localhost:8789/v1/payments/$id/refresh | grep -q '"status":"succeeded"'
