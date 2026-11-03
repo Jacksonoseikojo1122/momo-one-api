@@ -56,7 +56,9 @@ MTN_CALLBACK_TOKEN=<long random value>
 
 **Sources:** MTN MoMo developer portal, [API collections](https://momodeveloper.mtn.com/API-collections). The operations above (CreateAccessToken, RequesttoPay, RequesttoPayTransactionStatus, Transfer, GetTransferStatus) and the `RequestToPayResult`, `TransferResult` and `ErrorReason` schemas were read from the portal's own API definitions.
 
-**Tested in MTN's sandbox (3 November 2026), payouts:** two transfers to a Ghana number, EUR 10.50 sent as `"10.50"` and EUR 25.00 sent as `"25"`. MTN accepted both (202) and both reached SUCCESSFUL, about 30 seconds later, with MTN's transaction id stored as `provider_reference`. Sending the first one again with the same Idempotency-Key returned the same payment, and nothing new went to MTN. Collections haven't been run against the sandbox yet.
+**Tested in MTN's sandbox (3 November 2026), payouts:** two transfers to a Ghana number, EUR 10.50 sent as `"10.50"` and EUR 25.00 sent as `"25"`. MTN accepted both (202) and both reached SUCCESSFUL, about 30 seconds later, with MTN's transaction id stored as `provider_reference`. Sending the first one again with the same Idempotency-Key returned the same payment, and nothing new went to MTN.
+
+**Collections, same day:** a request to pay of EUR 12.50 from a Ghana number reached SUCCESSFUL, with MTN's transaction id stored. MTN's sandbox failure numbers were run straight through the provider: `46733123450` came back FAILED with INTERNAL_PROCESSING_ERROR (`provider_error`), `46733123451` APPROVAL_REJECTED (`declined`) and `46733123452` EXPIRED (`expired`), for collections, and `46733123450` FAILED for payouts too. They're Swedish numbers, so the API itself won't take them; it only accepts Ghana numbers.
 
 **Currency.** MTN's sandbox only accepts EUR, which is why `MTN_CURRENCIES` defaults to EUR there. Production in Ghana is GHS.
 
