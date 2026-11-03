@@ -31,6 +31,8 @@ Each adapter was written from the provider's own documentation, which is linked 
 
 **Automated payouts and OTPs.** Paystack asks for an OTP on transfers unless you turn off *Confirm transfers before sending* (Dashboard → Preferences). Until you do, transfers sit at `otp`, which shows as `pending`.
 
+**Tested in Paystack test mode (3 November 2026):** a GHS 25.00 collection from Paystack's test MTN number (`055 123 4987`) succeeded within 2 seconds, and a GHS 10.00 payout to it succeeded once *Confirm transfers before sending* was off (with it on, the transfer stayed at `otp`, as above). Paystack publishes no Ghana test numbers for Telecel or AirtelTigo, which use the same code path, and M-Pesa needs a Kenyan Paystack account, so make one small live payment on each before relying on them.
+
 ## MTN MoMo direct: `mtn_momo`
 
 **Covers:** MTN in Ghana: Collection (RequesttoPay) and Disbursement (Transfer).
