@@ -56,9 +56,9 @@ MTN_CALLBACK_TOKEN=<long random value>
 
 **Sources:** MTN MoMo developer portal, [API collections](https://momodeveloper.mtn.com/API-collections). The operations above (CreateAccessToken, RequesttoPay, RequesttoPayTransactionStatus, Transfer, GetTransferStatus) and the `RequestToPayResult`, `TransferResult` and `ErrorReason` schemas were read from the portal's own API definitions.
 
-**Two things to confirm in MTN's sandbox before going live:**
-- **Amount format.** MTN's schema types `amount` as a string without saying how decimals are written. We send `"25"` for a whole amount and `"10.50"` otherwise.
-- **Currency.** MTN's sandbox only accepts EUR, which is why `MTN_CURRENCIES` defaults to EUR there. Production in Ghana is GHS.
+**Tested in MTN's sandbox (3 November 2026), payouts:** two transfers to a Ghana number, EUR 10.50 sent as `"10.50"` and EUR 25.00 sent as `"25"`. MTN accepted both (202) and both reached SUCCESSFUL, about 30 seconds later, with MTN's transaction id stored as `provider_reference`. Sending the first one again with the same Idempotency-Key returned the same payment, and nothing new went to MTN. Collections haven't been run against the sandbox yet.
+
+**Currency.** MTN's sandbox only accepts EUR, which is why `MTN_CURRENCIES` defaults to EUR there. Production in Ghana is GHS.
 
 ## Sandbox: `sandbox`
 

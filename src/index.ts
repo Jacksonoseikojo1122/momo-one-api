@@ -8,7 +8,7 @@ import { SandboxProvider } from "./providers/sandbox.js";
 import { createApp } from "./server.js";
 import { Payments } from "./service.js";
 import { postgresStore, sqliteStore } from "./store.js";
-import { NETWORKS, type Currency, type Network, type Provider } from "./types.js";
+import { CURRENCIES, NETWORKS, type Currency, type Network, type Provider } from "./types.js";
 
 const env = process.env;
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -50,8 +50,9 @@ for (const pair of (env.ROUTES ?? "").split(",").filter(Boolean)) {
 }
 for (const n of NETWORKS) {
   if (routes[n]) continue;
-  const cur: Currency = n === "mpesa" ? "KES" : "GHS";
-  routes[n] = providers.find((p) => p.name !== "sandbox" && (p.supports("collection", n, cur) || p.supports("payout", n, cur)))?.name ?? providers.find((p) => p.name === "sandbox")?.name;
+  // Any currency counts: MTN's sandbox only takes EUR, so checking GHS alone left mtn unrouted there.
+  const serves = (p: Provider) => CURRENCIES.some((cur) => p.supports("collection", n, cur) || p.supports("payout", n, cur));
+  routes[n] = providers.find((p) => p.name !== "sandbox" && serves(p))?.name ?? providers.find((p) => p.name === "sandbox")?.name;
 }
 
 const apiKeys = (env.MOMO_API_KEYS ?? "").split(",").map((k) => k.trim()).filter(Boolean);
